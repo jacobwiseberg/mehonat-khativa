@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Hebrew Typing Trainer — learn to type common Hebrew words</title>
+  <meta name="description" content="Free, no-login typing trainer for common Hebrew words with an on-screen Israeli-layout keyboard. Works on phones and desktops.">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#f7f7f5" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#16171a" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232f5bea'/%3E%3Ctext x='32' y='46' font-size='40' text-anchor='middle' fill='white' font-family='Arial'%3E%D7%90%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/app.js" defer></script>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <h1 class="brand">Hebrew Typing <span class="brand-he" lang="he" dir="rtl">הקלדה</span></h1>
+      <details class="settings" id="settings">
+        <summary aria-label="Settings">⚙︎ <span class="summary-text">Settings</span></summary>
+        <div class="settings-panel">
+          <label class="row">
+            <span>Word order</span>
+            <select id="optMode">
+              <option value="order">In order (easiest first)</option>
+              <option value="shuffle">Shuffle (practice all)</option>
+            </select>
+          </label>
+          <label class="row check">
+            <input type="checkbox" id="optKeyboard">
+            <span>Show on-screen Hebrew keyboard<small>Turn off to use your device's own Hebrew keyboard</small></span>
+          </label>
+          <label class="row check">
+            <input type="checkbox" id="optHints">
+            <span>Highlight the next key</span>
+          </label>
+          <label class="row check">
+            <input type="checkbox" id="optLabels">
+            <span>Show English (QWERTY) key labels</span>
+          </label>
+          <label class="row check">
+            <input type="checkbox" id="optMap">
+            <span>Treat English-layout keystrokes as Hebrew<small>Physical keyboard without Hebrew enabled? Press the key where the letter lives (e.g. T&nbsp;→&nbsp;א).</small></span>
+          </label>
+          <div class="row buttons">
+            <button type="button" id="resetProgress" class="btn">Restart word list</button>
+            <button type="button" id="resetStats" class="btn danger">Reset stats</button>
+          </div>
+          <p class="fineprint">No accounts, no cookies, no tracking. Progress is saved only in this browser (localStorage).</p>
+        </div>
+      </details>
+    </header>
+
+    <section class="stats" aria-label="Session stats">
+      <div class="stat"><span class="stat-val" id="statWords">0</span><span class="stat-label">words</span></div>
+      <div class="stat"><span class="stat-val" id="statAcc">—</span><span class="stat-label">accuracy</span></div>
+      <div class="stat"><span class="stat-val" id="statWpm">—</span><span class="stat-label">WPM</span></div>
+      <div class="stat"><span class="stat-val" id="statPerfect">0</span><span class="stat-label">perfect</span></div>
+    </section>
+
+    <main class="practice">
+      <p class="progress" id="progress" aria-live="off">Loading…</p>
+      <div class="target" id="target" dir="rtl" lang="he"></div>
+      <p class="translit" id="translit"></p>
+      <p class="meaning" id="meaning"></p>
+
+      <label class="visually-hidden" for="typeInput">Type the Hebrew word</label>
+      <input id="typeInput" class="type-input" type="text" dir="rtl" lang="he"
+             autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+             enterkeyhint="next" placeholder="הקלידו כאן…">
+
+      <div class="result" id="result" role="status" aria-live="polite"></div>
+
+      <div class="actions">
+        <button type="button" class="btn" id="skipBtn">Skip</button>
+        <button type="button" class="btn" id="retryBtn" hidden>Try again</button>
+        <button type="button" class="btn primary" id="nextBtn" hidden>Next →</button>
+      </div>
+    </main>
+
+    <section class="keyboard" id="keyboard" dir="ltr" aria-label="On-screen Hebrew keyboard (standard Israeli layout)"></section>
+  </div>
+  <noscript><p class="noscript">This typing trainer needs JavaScript enabled.</p></noscript>
+</body>
+</html>

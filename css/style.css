@@ -1,0 +1,357 @@
+/* Hebrew Typing Trainer — mobile-first, no external assets. */
+
+:root {
+  --bg: #f7f7f5;
+  --fg: #1d1d1f;
+  --muted: #6b6b72;
+  --card: #ffffff;
+  --border: #dfdfe4;
+  --accent: #2f5bea;
+  --accent-fg: #ffffff;
+  --ok: #17803a;
+  --ok-bg: #dcf5e3;
+  --bad: #c9222e;
+  --bad-bg: #ffe0e2;
+  --hint: #ffd84d;
+  --hint-fg: #1d1d1f;
+  --key: #ffffff;
+  --key-fg: #1d1d1f;
+  --key-mod: #d9dbe2;
+  --key-shadow: 0 1px 0 rgba(0, 0, 0, 0.22);
+  --kb-bg: #e9eaee;
+
+  --font-ui: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", Arial, sans-serif;
+  --font-he: "Arial Hebrew", "Noto Sans Hebrew", "Segoe UI", Arial, "Noto Sans", sans-serif;
+
+  --gap: 5px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #16171a;
+    --fg: #ececf0;
+    --muted: #9a9ba6;
+    --card: #202227;
+    --border: #33353d;
+    --accent: #6d8dff;
+    --accent-fg: #0d1022;
+    --ok: #4fd27a;
+    --ok-bg: #173622;
+    --bad: #ff6b74;
+    --bad-bg: #3d1a1e;
+    --hint: #d9b21f;
+    --hint-fg: #16171a;
+    --key: #3a3c44;
+    --key-fg: #f1f1f4;
+    --key-mod: #2a2c33;
+    --key-shadow: 0 1px 0 rgba(0, 0, 0, 0.6);
+    --kb-bg: #1c1d22;
+  }
+}
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+
+html, body { margin: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-ui);
+  font-size: 16px;
+  line-height: 1.4;
+  overflow-x: hidden;
+}
+
+[hidden] { display: none !important; }
+
+[lang="he"] { font-family: var(--font-he); }
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  overflow: hidden; clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.app {
+  max-width: 760px;
+  margin: 0 auto;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* ---------- Top bar & settings ---------- */
+
+.topbar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: calc(10px + env(safe-area-inset-top)) 14px 6px;
+}
+
+.brand { font-size: 1.1rem; margin: 0; font-weight: 700; letter-spacing: 0.01em; }
+.brand-he { color: var(--accent); margin-inline-start: 4px; }
+
+.settings > summary {
+  list-style: none;
+  cursor: pointer;
+  user-select: none;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  font-size: 0.95rem;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.settings > summary::-webkit-details-marker { display: none; }
+.settings[open] > summary { border-color: var(--accent); }
+
+.settings-panel {
+  position: absolute;
+  z-index: 10;
+  top: calc(100% + 2px);
+  left: 10px;
+  right: 10px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+  display: grid;
+  gap: 12px;
+}
+
+.settings-panel .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.settings-panel .row.check { justify-content: flex-start; align-items: flex-start; cursor: pointer; }
+.settings-panel .row.check input { width: 22px; height: 22px; margin: 1px 0 0; flex: none; accent-color: var(--accent); }
+.settings-panel small { display: block; color: var(--muted); font-size: 0.82rem; }
+.settings-panel select {
+  font: inherit;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--fg);
+  max-width: 60%;
+}
+.settings-panel .buttons { justify-content: flex-start; flex-wrap: wrap; }
+.fineprint { margin: 0; font-size: 0.8rem; color: var(--muted); }
+
+/* ---------- Stats ---------- */
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  padding: 4px 14px;
+}
+.stat {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 6px 4px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+}
+.stat-val { font-size: 1.15rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.stat-label { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+
+/* ---------- Practice area ---------- */
+
+.practice {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px 12px;
+  text-align: center;
+  min-height: 0;
+}
+
+.progress { margin: 0 0 4px; color: var(--muted); font-size: 0.85rem; }
+
+.target {
+  font-family: var(--font-he);
+  font-size: clamp(3rem, 15vw, 5.5rem);
+  font-weight: 700;
+  line-height: 1.15;
+  min-height: 1.15em;
+  direction: rtl;
+  unicode-bidi: isolate;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+.target .ch {
+  display: inline-block;
+  padding: 0 0.02em;
+  border-bottom: 0.06em solid transparent;
+  transition: color 80ms, background-color 80ms;
+  border-radius: 0.08em;
+}
+.target .ch.ok { color: var(--ok); }
+.target .ch.bad {
+  color: var(--bad);
+  background: var(--bad-bg);
+  text-decoration: underline wavy var(--bad);
+  text-decoration-thickness: 0.04em;
+  text-underline-offset: 0.18em;
+}
+.target .ch.cur { border-bottom-color: var(--accent); }
+.target.done-perfect .ch { color: var(--ok); }
+
+.translit { margin: 2px 0 0; font-size: 1.15rem; color: var(--muted); font-style: italic; }
+.meaning { margin: 2px 0 12px; font-size: 1.15rem; font-weight: 600; }
+
+.type-input {
+  width: 100%;
+  max-width: 420px;
+  font-family: var(--font-he);
+  font-size: 1.6rem; /* >= 16px prevents iOS zoom-on-focus */
+  text-align: center;
+  direction: rtl;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 2px solid var(--border);
+  background: var(--card);
+  color: var(--fg);
+  outline: none;
+}
+.type-input:focus { border-color: var(--accent); }
+.type-input::placeholder { color: var(--muted); opacity: 0.6; font-size: 1.1rem; }
+
+.result {
+  min-height: 1.6em;
+  margin-top: 10px;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+.result.great { color: var(--ok); }
+.result.retry { color: var(--bad); }
+.result.info { color: var(--accent); }
+
+.actions { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 6px; }
+
+.btn {
+  font: inherit;
+  font-size: 0.95rem;
+  min-height: 44px;
+  padding: 8px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--fg);
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); font-weight: 700; }
+.btn.danger { color: var(--bad); }
+.btn:focus-visible, .key:focus-visible, .settings > summary:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ---------- Virtual keyboard ---------- */
+/* The rows mirror a physical keyboard (left-to-right key positions),
+   so the container is dir="ltr"; the letters on the keys are Hebrew. */
+
+.keyboard {
+  --kw: calc((100% - 9 * var(--gap)) / 10.25); /* one key width; % = row width */
+  background: var(--kb-bg);
+  padding: 8px 4px calc(8px + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--border);
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  touch-action: manipulation;
+}
+
+.kb-row { display: flex; gap: var(--gap); margin-bottom: var(--gap); }
+.kb-row:last-child { margin-bottom: 0; }
+
+.key {
+  position: relative;
+  flex: 0 0 var(--kw);
+  width: var(--kw);
+  min-width: 0;
+  height: 50px;
+  padding: 0;
+  border: 0;
+  border-radius: 7px;
+  background: var(--key);
+  color: var(--key-fg);
+  box-shadow: var(--key-shadow);
+  font-family: var(--font-he);
+  font-size: 1.45rem;
+  line-height: 1;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color 90ms, transform 60ms;
+}
+.key .heb { pointer-events: none; }
+.key .lat {
+  position: absolute;
+  top: 3px;
+  left: 5px;
+  font-family: var(--font-ui);
+  font-size: 0.62rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  pointer-events: none;
+}
+.no-labels .key .lat { display: none; }
+
+/* Physical stagger: A row is offset 1/4 key from Q row, Z row 3/4 key. */
+.kb-row.r1 .key:first-child { margin-left: calc(var(--kw) * 0.25); }
+.kb-row.r2 .key:first-child { margin-left: calc(var(--kw) * 0.75); }
+
+.key.mod { background: var(--key-mod); font-family: var(--font-ui); font-size: 1rem; }
+.key.back { flex: 0 0 calc(var(--kw) * 1.75); }
+.key.space { flex: 1 1 auto; width: auto; }
+.key.enter { flex: 0 0 calc(var(--kw) * 1.75); }
+
+.key.hint { background: var(--hint); color: var(--hint-fg); }
+.key.hint .lat { color: rgba(0, 0, 0, 0.55); }
+.key.pressed { transform: translateY(1px) scale(0.96); filter: brightness(0.88); }
+
+@media (hover: hover) {
+  .key:hover { filter: brightness(0.96); }
+}
+
+/* Small phones: a touch more compact so everything fits without scrolling. */
+@media (max-height: 640px) {
+  .key { height: 44px; }
+  .target { font-size: clamp(2.6rem, 13vw, 4.5rem); }
+  .meaning { margin-bottom: 8px; }
+}
+
+/* Tablet / desktop */
+@media (min-width: 600px) {
+  :root { --gap: 7px; }
+  .brand { font-size: 1.3rem; }
+  .key { height: 58px; font-size: 1.7rem; border-radius: 9px; }
+  .key .lat { font-size: 0.72rem; }
+  .keyboard { border: 1px solid var(--border); border-radius: 16px 16px 0 0; padding: 12px 10px 14px; }
+  .settings-panel { left: auto; width: 380px; right: 14px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
+
+.noscript { padding: 20px; text-align: center; }
