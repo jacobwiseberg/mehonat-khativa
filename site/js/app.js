@@ -60,14 +60,19 @@
 
   function loadSaved() {
     const base = JSON.parse(JSON.stringify(DEFAULTS));
+    let hadSavedData = false;
     try {
       const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
       if (data && typeof data === 'object') {
+        hadSavedData = true;
         Object.assign(base.settings, data.settings);
         Object.assign(base.stats, data.stats);
         Object.assign(base.progress, data.progress);
       }
     } catch (_) { /* storage unavailable or corrupt: start fresh */ }
+    // First-ever visit on a touch device: default to the device's own
+    // Hebrew keyboard rather than the on-screen one.
+    if (!hadSavedData && isCoarse) base.settings.onscreen = false;
     return base;
   }
 
