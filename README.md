@@ -1,6 +1,6 @@
 # Hebrew Typing Trainer
 
-A free, no-login web app for learning to type the most common Hebrew words. It works on phones and desktops.
+A free, no-login web app for learning to type the 500 most common Hebrew words. It works on phones and desktops.
 
 - **100% static.** Plain HTML, CSS and vanilla JS. No build step, no backend, no dependencies.
 - **No accounts, cookies, analytics or ads.** Stats and progress are stored only in your browser's `localStorage`.
@@ -47,7 +47,7 @@ python3 -m http.server 8787
 
 ## Editing the word list
 
-`data/words.json` is an array of objects:
+`data/words.json` is an array of 500 objects, ranked by frequency from the [OpenHebrew frequency list](https://openhebrew.net/en/learn/frequency):
 
 ```json
 { "hebrew": "שלום", "transliteration": "shalom", "english": "hello / peace", "rank": 1 }
