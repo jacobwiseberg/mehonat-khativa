@@ -18,7 +18,7 @@ A free, no-login web app for learning to type the 500 most common Hebrew words. 
 4. When you finish a word, you see your accuracy and speed. A perfect word moves on to the next one automatically. Otherwise you can choose **Try again** or **Next**.
 5. The stats bar shows words completed, overall accuracy, WPM (5 characters = 1 word) and the number of perfect words. Use **Settings → Reset stats** to clear them.
 
-Words appear in rank order (roughly most common and easiest first) by default. Choose **Shuffle (practice all)** in Settings to practice them in random order.
+Words are shown in random (shuffled) order, cycling through the whole list before repeating.
 
 ### Keyboard layout reference (Israeli standard)
 
@@ -38,16 +38,17 @@ The on-screen keyboard is drawn left to right because it mirrors physical key po
 
 ## Running locally
 
-The app loads `data/words.json` with `fetch()`. Browsers block that on `file://` URLs, so serve the folder over HTTP:
+The app loads `data/words.json` with `fetch()`. Browsers block that on `file://` URLs, so serve the `site/` folder over HTTP:
 
 ```sh
+cd site
 python3 -m http.server 8787
 # then open http://localhost:8787/
 ```
 
 ## Editing the word list
 
-`data/words.json` is an array of 500 objects, ranked by frequency from the [OpenHebrew frequency list](https://openhebrew.net/en/learn/frequency):
+`data/words.json` (inside `site/`) is an array of 500 objects, ranked by frequency from the [OpenHebrew frequency list](https://openhebrew.net/en/learn/frequency):
 
 ```json
 { "hebrew": "שלום", "transliteration": "shalom", "english": "hello / peace", "rank": 1 }
@@ -60,67 +61,61 @@ python3 -m http.server 8787
 
 ## Deploying to Cloudflare Pages
 
-There's no build step. Cloudflare serves the repository root as-is.
-
-Target URL: `wiseberg.net/mehonat-khativa`. All asset paths in this app are
+Target URL: `wiseberg.net/mehonat-khativa`. All asset paths in the app are
 relative (`css/style.css`, `js/app.js`, `data/words.json` — no leading `/`),
 so it works correctly at any subpath, not just a domain root.
 
 **Important:** Cloudflare Pages attaches a custom domain to the *root* of a
 project. It can't give one Pages project a subpath (like `/mehonat-khativa`)
 of a domain whose root is already served by a different Pages project
-(`wiseberg.net`'s own Hugo site). There are two ways to actually land this
-app at `wiseberg.net/mehonat-khativa`:
-
-### Option A — fold it into the wiseberg.net repo (recommended, zero extra infra)
-
-Hugo copies anything under `static/` into the build output verbatim. Copy
-this app's files into the `wiseberg.net` repo and they'll deploy together in
-the single existing Pages project:
+(`wiseberg.net`'s own Hugo site). This repo is deployed via a **git
+submodule** in the `wiseberg.net` repo, which keeps the two repos fully
+separate while landing the app's files inside the single Hugo build:
 
 ```sh
-mkdir -p ~/Projects/wiseberg.net/static/mehonat-khativa
-cp -r index.html css js data ~/Projects/wiseberg.net/static/mehonat-khativa/
+# one-time setup, from the wiseberg.net repo
+git submodule add https://github.com/jacobwiseberg/mehonat-khativa.git static/mehonat-khativa
 ```
 
-Commit and push the `wiseberg.net` repo as usual. The app will be live at
-`wiseberg.net/mehonat-khativa/index.html` (and `/mehonat-khativa/` once an
-index redirect or trailing-slash rule is in place — Hugo/Cloudflare Pages
-serve `index.html` for a directory request by default, so plain
-`wiseberg.net/mehonat-khativa/` should just work).
+`wiseberg.net/hugo.toml` mounts only `static/mehonat-khativa/site` into the
+build (not the submodule root), so this repo's `README.md`, `SPEC.md` and
+`.git` metadata never get published — only `site/index.html`, `site/css/`,
+`site/js/` and `site/data/` ship.
 
-Every time this project's `data/words.json`, `index.html`, `css/`, or `js/`
-change, re-run the copy step and push `wiseberg.net` again. This repo
-(`mehonat-khativa`) stays the source of truth for the app; the copy is a
-one-way sync into the site repo at deploy time.
+To publish a change made in *this* repo:
 
-### Option B — keep it fully separate (adds a Worker)
+```sh
+git push                                   # push the change here first
+cd ~/Projects/wiseberg.net
+git submodule update --remote static/mehonat-khativa
+git add static/mehonat-khativa
+git commit -m "Update mehonat-khativa submodule"
+git push                                   # triggers the wiseberg.net Pages deploy
+```
 
-Deploy this repo as its own Pages project (steps below), then add a
-Cloudflare Worker with a route for `wiseberg.net/mehonat-khativa/*` that
-proxies requests to the generated `*.pages.dev` URL. More moving parts than
-Option A — only worth it if you want this app's deploys fully decoupled from
-the main site's.
+The `wiseberg.net` Cloudflare Pages project needs **"Enable submodules"**
+turned on (Pages project → Settings → Builds → Git settings) so Cloudflare's
+build checks out this submodule when it clones the repo.
 
-1. Push this repo to GitHub or GitLab.
-2. In the Cloudflare dashboard, go to **Workers & Pages → Create → Pages → Connect to Git** and select the repo.
-3. Use these build settings:
-   - **Framework preset:** `None`
-   - **Build command:** *(leave empty)*
-   - **Build output directory:** `/`
-   - **Production branch:** `main`
-4. Click **Save and Deploy**. Cloudflare gives the site a URL like `mehonat-khativa.pages.dev`.
-5. Add a Worker route `wiseberg.net/mehonat-khativa/*` that fetches from that `.pages.dev` URL and returns the response.
+### Keeping it a fully independent deploy (alternative)
 
-Every push to the production branch redeploys the site automatically.
+If you'd rather this app deploy on its own instead of through `wiseberg.net`:
+push this repo to its own Cloudflare Pages project (Framework preset `None`,
+build command empty, output directory `site`), then add a Cloudflare Worker
+route for `wiseberg.net/mehonat-khativa/*` that proxies to the generated
+`*.pages.dev` URL. More moving parts than the submodule approach above —
+only worth it if you want this app's deploys fully decoupled from the main
+site's build/deploy cycle.
 
 ## Project structure
 
 ```
-index.html        # single page
-css/style.css     # mobile-first styles, light/dark mode
-js/app.js         # all app logic (no dependencies)
-data/words.json   # word list
+site/index.html        # single page
+site/css/style.css     # mobile-first styles
+site/js/app.js         # all app logic (no dependencies)
+site/data/words.json   # word list
+README.md              # this file (not published)
+SPEC.md                # original design spec (not published)
 ```
 
 ## Privacy
