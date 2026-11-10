@@ -42,7 +42,6 @@
     statWpm: $('statWpm'),
     statPerfect: $('statPerfect'),
     settings: $('settings'),
-    optMode: $('optMode'),
     optKeyboard: $('optKeyboard'),
     optHints: $('optHints'),
     optLabels: $('optLabels'),
@@ -54,9 +53,9 @@
   // ---------- Persistence (localStorage only) ----------
 
   const DEFAULTS = {
-    settings: { mode: 'order', onscreen: true, hints: true, labels: true, mapLatin: true },
+    settings: { onscreen: true, hints: true, labels: true, mapLatin: true },
     stats: { words: 0, chars: 0, correct: 0, ms: 0, perfect: 0 },
-    progress: { orderPos: 0, shuffleOrder: null, shufflePos: 0 },
+    progress: { shuffleOrder: null, pos: 0 },
   };
 
   function loadSaved() {
@@ -98,27 +97,19 @@
     return arr;
   }
 
-  const isShuffle = () => saved.settings.mode === 'shuffle';
-  const getPos = () => (isShuffle() ? saved.progress.shufflePos : saved.progress.orderPos);
-  function setPos(p) {
-    if (isShuffle()) saved.progress.shufflePos = p;
-    else saved.progress.orderPos = p;
-  }
+  const getPos = () => saved.progress.pos;
+  function setPos(p) { saved.progress.pos = p; }
 
   function buildOrder(forceNewShuffle) {
     const n = words.length;
-    if (isShuffle()) {
-      let o = saved.progress.shuffleOrder;
-      const valid = Array.isArray(o) && o.length === n && o.every((i) => Number.isInteger(i) && i >= 0 && i < n);
-      if (forceNewShuffle || !valid) {
-        o = shuffle(range(n));
-        saved.progress.shuffleOrder = o;
-        saved.progress.shufflePos = 0;
-      }
-      order = o;
-    } else {
-      order = range(n);
+    let o = saved.progress.shuffleOrder;
+    const valid = Array.isArray(o) && o.length === n && o.every((i) => Number.isInteger(i) && i >= 0 && i < n);
+    if (forceNewShuffle || !valid) {
+      o = shuffle(range(n));
+      saved.progress.shuffleOrder = o;
+      saved.progress.pos = 0;
     }
+    order = o;
     const p = getPos();
     if (!Number.isInteger(p) || p < 0 || p >= n) setPos(0);
   }
@@ -148,7 +139,7 @@
     el.target.setAttribute('aria-label', w.hebrew);
     el.translit.textContent = w.transliteration;
     el.meaning.textContent = w.english;
-    el.progress.textContent = `Word ${getPos() + 1} of ${order.length}${isShuffle() ? ' · shuffled' : ''}`;
+    el.progress.textContent = `Word ${getPos() + 1} of ${order.length} · shuffled`;
 
     el.skipBtn.hidden = false;
     el.retryBtn.hidden = true;
@@ -240,7 +231,7 @@
     if (p >= order.length) {
       wrapped = true;
       p = 0;
-      if (isShuffle()) buildOrder(true);
+      buildOrder(true);
     }
     setPos(p);
     save();
@@ -386,7 +377,6 @@
 
   function applySettings() {
     const st = saved.settings;
-    el.optMode.value = st.mode;
     el.optKeyboard.checked = st.onscreen;
     el.optHints.checked = st.hints;
     el.optLabels.checked = st.labels;
@@ -399,12 +389,6 @@
   }
 
   function bindSettings() {
-    el.optMode.addEventListener('change', () => {
-      saved.settings.mode = el.optMode.value === 'shuffle' ? 'shuffle' : 'order';
-      buildOrder(false);
-      save();
-      showWord();
-    });
     const toggle = (input, key) => input.addEventListener('change', () => {
       saved.settings[key] = input.checked;
       save();
@@ -423,7 +407,7 @@
       setResult('Stats cleared.', 'info');
     });
     el.resetProgress.addEventListener('click', () => {
-      if (isShuffle()) buildOrder(true);
+      buildOrder(true);
       setPos(0);
       save();
       showWord();

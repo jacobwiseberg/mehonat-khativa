@@ -5,10 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Mehonat Khativa (מכונת כתיבה) — learn to type common Hebrew words</title>
   <meta name="description" content="Free, no-login typing trainer for common Hebrew words with an on-screen Israeli-layout keyboard. Works on phones and desktops.">
-  <meta name="color-scheme" content="light dark">
-  <meta name="theme-color" content="#f7f7f5" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#16171a" media="(prefers-color-scheme: dark)">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232f5bea'/%3E%3Ctext x='32' y='46' font-size='40' text-anchor='middle' fill='white' font-family='Arial'%3E%D7%90%3C/text%3E%3C/svg%3E">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#1a1f2e">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2364b5f6'/%3E%3Ctext x='32' y='46' font-size='40' text-anchor='middle' fill='%231a1f2e' font-family='Arial'%3E%D7%90%3C/text%3E%3C/svg%3E">
   <link rel="stylesheet" href="css/style.css">
   <script src="js/app.js" defer></script>
 </head>
@@ -19,13 +18,6 @@
       <details class="settings" id="settings">
         <summary aria-label="Settings">⚙︎ <span class="summary-text">Settings</span></summary>
         <div class="settings-panel">
-          <label class="row">
-            <span>Word order</span>
-            <select id="optMode">
-              <option value="order">In order (easiest first)</option>
-              <option value="shuffle">Shuffle (practice all)</option>
-            </select>
-          </label>
           <label class="row check">
             <input type="checkbox" id="optKeyboard">
             <span>Show on-screen Hebrew keyboard<small>Turn off to use your device's own Hebrew keyboard</small></span>
@@ -47,6 +39,7 @@
             <button type="button" id="resetStats" class="btn danger">Reset stats</button>
           </div>
           <p class="fineprint">No accounts, no cookies, no tracking. Progress is saved only in this browser (localStorage).</p>
+          <p class="fineprint">Vocabulary from <a href="https://openhebrew.net/en/learn/frequency" target="_blank" rel="noopener">openhebrew.net</a> &mdash; visit for more Hebrew practice.</p>
         </div>
       </details>
     </header>

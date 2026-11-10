@@ -1,52 +1,30 @@
-/* Hebrew Typing Trainer — mobile-first, no external assets. */
+/* Mehonat Khativa — mobile-first, no external assets.
+   Colors/fonts matched to wiseberg.net for a consistent look. */
 
 :root {
-  --bg: #f7f7f5;
-  --fg: #1d1d1f;
-  --muted: #6b6b72;
-  --card: #ffffff;
-  --border: #dfdfe4;
-  --accent: #2f5bea;
-  --accent-fg: #ffffff;
-  --ok: #17803a;
-  --ok-bg: #dcf5e3;
-  --bad: #c9222e;
-  --bad-bg: #ffe0e2;
-  --hint: #ffd84d;
-  --hint-fg: #1d1d1f;
-  --key: #ffffff;
-  --key-fg: #1d1d1f;
-  --key-mod: #d9dbe2;
-  --key-shadow: 0 1px 0 rgba(0, 0, 0, 0.22);
-  --kb-bg: #e9eaee;
+  --bg: #1a1f2e;
+  --fg: #e0e0e0;
+  --muted: #9e9e9e;
+  --card: #1b2233;
+  --border: #2d3548;
+  --accent: #64b5f6;
+  --accent-fg: #0d1022;
+  --ok: #4fd27a;
+  --ok-bg: #173622;
+  --bad: #ff6b74;
+  --bad-bg: #3d1a1e;
+  --hint: #d9b21f;
+  --hint-fg: #16171a;
+  --key: #23293b;
+  --key-fg: #e0e0e0;
+  --key-mod: #2d3548;
+  --key-shadow: 0 1px 0 rgba(0, 0, 0, 0.6);
+  --kb-bg: #141822;
 
-  --font-ui: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", Arial, sans-serif;
-  --font-he: "Arial Hebrew", "Noto Sans Hebrew", "Segoe UI", Arial, "Noto Sans", sans-serif;
+  --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-he: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 
   --gap: 5px;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #16171a;
-    --fg: #ececf0;
-    --muted: #9a9ba6;
-    --card: #202227;
-    --border: #33353d;
-    --accent: #6d8dff;
-    --accent-fg: #0d1022;
-    --ok: #4fd27a;
-    --ok-bg: #173622;
-    --bad: #ff6b74;
-    --bad-bg: #3d1a1e;
-    --hint: #d9b21f;
-    --hint-fg: #16171a;
-    --key: #3a3c44;
-    --key-fg: #f1f1f4;
-    --key-mod: #2a2c33;
-    --key-shadow: 0 1px 0 rgba(0, 0, 0, 0.6);
-    --kb-bg: #1c1d22;
-  }
 }
 
 *,
