@@ -3,7 +3,7 @@
 (() => {
   'use strict';
 
-  const STORAGE_KEY = 'hebrew-type:v1';
+  const STORAGE_KEY = 'mehonat-khativa:v1';
   const AUTO_ADVANCE_MS = 1100;
 
   // Standard Israeli PC keyboard layout (SI-1452), letter rows only.
